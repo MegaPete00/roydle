@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>How to play Roydle Rumble | House of Hoss</title>
+<meta name="google-adsense-account" content="ca-pub-4254022395756056">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Daily Royal Rumble guessing game. Name the mystery Rumble entrant from their first and last Rumble, eliminations, longest run and best finish.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Big+Shoulders+Display:wght@800;900&display=swap">
+<style>
+/* Layout: one reading column under a black bar strung with ring ropes, same system as the games. */
+:root{
+  --canvas:#BDC1C6; --panel:#FFFFFF; --ink:#0E0F12; --muted:#40474F; --line:#A3A8AF; --well:#D0D3D7;
+  --bar:#2F353C; --bar-ink:#FFFFFF; --bar-muted:#AEB4BB;
+  --rope-r:#5B18EA; --rope-w:#FFFFFF; --rope-b:#0E0F12; --gold:#5B18EA; --gold-ink:#FFFFFF; --focus:#5B18EA;
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --f-label:"Barlow Condensed","Arial Narrow",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --canvas:#16181B; --panel:#212429; --ink:#EEEFF1; --muted:#9BA2AA; --line:#33383F; --well:#2A2E34;
+  --bar:#0B0C0E; --bar-ink:#FFFFFF; --bar-muted:#8D949C;
+  --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A; --gold:#8F5CFF; --gold-ink:#0E0F12; --focus:#A57DFF; color-scheme:dark }
+ }
+:root[data-theme="dark"]{
+  --canvas:#16181B; --panel:#212429; --ink:#EEEFF1; --muted:#9BA2AA; --line:#33383F; --well:#2A2E34;
+  --bar:#0B0C0E; --bar-ink:#FFFFFF; --bar-muted:#8D949C;
+  --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A; --gold:#8F5CFF; --gold-ink:#0E0F12; --focus:#A57DFF; color-scheme:dark }
+*,*::before,*::after{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+a{color:var(--ink);text-underline-offset:3px}
+:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+.wrap{max-width:40rem;margin-inline:auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.bar{background:var(--bar);color:var(--bar-ink)}
+.bar .wrap{padding-block:18px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.mark{margin:0;font-family:var(--f-display);font-weight:900;font-size:1.6rem;line-height:.9;text-transform:uppercase;letter-spacing:.01em}
+.mark a{color:inherit;text-decoration:none}
+.crumb{font-family:var(--f-label);font-weight:600;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--bar-muted)}
+.crumb a{color:var(--bar-ink)}
+.ropes{display:grid;gap:4px;padding-bottom:8px;background:var(--bar)}
+.ropes i{display:block;height:4px} .ropes i:nth-child(1){background:var(--rope-r)} .ropes i:nth-child(2){background:var(--rope-w)} .ropes i:nth-child(3){background:var(--rope-b)}
+main{display:grid;gap:22px;padding-block:28px 56px}
+h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(2.4rem,10vw,3.6rem);line-height:.92;text-transform:uppercase;text-wrap:balance}
+h2{margin:8px 0 0;font-family:var(--f-label);font-weight:700;font-size:1.05rem;letter-spacing:.14em;text-transform:uppercase}
+p,li{max-width:65ch} p{margin:0} ul,ol{margin:0;padding-left:1.2rem;display:grid;gap:6px}
+.lede{font-size:1.12rem;color:var(--muted)}
+.eyebrow{font-family:var(--f-label);font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.fine{font-size:.88rem;color:var(--muted)}
+.games{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr))}
+.game{display:grid;gap:10px;align-content:start;padding:18px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.game h3{margin:0;font-family:var(--f-display);font-weight:900;font-size:2rem;line-height:.95;text-transform:uppercase}
+.game .tag{justify-self:start;font-family:var(--f-label);font-weight:700;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--gold);color:var(--gold-ink)}
+.game.soon{background:transparent;border-style:dashed} .game.soon h3{color:var(--muted)}
+.play{justify-self:start;display:inline-block;padding:10px 18px;border-radius:10px;background:var(--gold);color:var(--gold-ink);text-decoration:none;font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
+.chips li{display:flex;align-items:center;gap:7px;font-size:.95rem}
+.sq{display:inline-block;width:14px;height:14px;border-radius:3px} .hit{background:#1B7F46} .near{background:#B88412} .miss{background:#C8232F}
+footer{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:6px;font-size:.88rem;color:var(--muted)}
+footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap"><p class="mark"><a href="/">House of Hoss</a></p><span class="crumb"><a href="/roydle/">Roydle Rumble</a> · How to play</span></div>
+  <div class="ropes" aria-hidden="true"><i></i><i></i><i></i></div>
+</header>
+<main class="wrap">
+
+<section style="display:grid;gap:12px">
+  <div class="eyebrow">How to play</div>
+  <h1>Roydle Rumble</h1>
+  <p class="lede">Name the mystery Royal Rumble entrant in eight guesses.</p>
+</section>
+<section style="display:grid;gap:10px">
+  <h2>The board</h2>
+  <p>Every guess shows six numbers from that wrestler's Royal Rumble career, side by side with the mystery entrant's:</p>
+  <ul>
+    <li><b>First Rumble</b> and <b>Last Rumble</b>: the years.</li>
+    <li><b>Rumbles</b>: how many Royal Rumble matches they were in.</li>
+    <li><b>Elims</b>: total eliminations, all Rumbles added up.</li>
+    <li><b>Longest run</b>: their longest time in a single Rumble.</li>
+    <li><b>Best finish</b>: Won, 2nd, 3rd and so on.</li>
+  </ul>
+  <ul class="chips">
+    <li><span class="sq hit"></span>Exact match</li>
+    <li><span class="sq near"></span>Close</li>
+  </ul>
+  <p>Close means within 2 years on First and Last Rumble, 1 Rumble, 2 eliminations, 5 minutes on Longest run, and 3 places on Best finish. The word under a number tells you about the mystery entrant compared to your guess: an Older or More recent Rumble, More or Fewer Rumbles and eliminations, a Longer or Shorter run, a Better or Worse finish (Better means a higher spot on the card, closer to winning).</p>
+</section>
+<section style="display:grid;gap:10px">
+  <h2>Who counts</h2>
+  <ul>
+    <li>Every men's Royal Rumble match from 1988 and every women's match from 2018, through the 2026 Royal Rumble. Each has its own daily.</li>
+    <li>The 2018 Greatest Royal Rumble in Saudi Arabia is not included.</li>
+    <li>One wrestler, one record. Different billings count as the same person: Cactus Jack, Mankind and Dude Love are all Mick Foley, and 1998 counts as one Rumble for him.</li>
+    <li>Wrestlers who never made it into the ring (no-shows, or taken out before their entrance) don't count. Whoever took the spot does.</li>
+    <li>Men's and women's are separate. Nia Jax, Beth Phoenix and Chyna also show up in the men's game with their men's numbers only.</li>
+  </ul>
+</section>
+<section style="display:grid;gap:10px">
+  <h2>Sharing</h2>
+  <p>When you finish, copy your result to share it. "Copy for Discord" adds the answer behind a spoiler tag.</p>
+</section>
+<section style="display:grid;gap:10px">
+  <h2>Where the numbers come from</h2>
+  <p>Entrant-by-entrant Rumble data from <a href="https://darrenswinloss.wordpress.com/wwerr2/">Darren's Win-Loss Records</a>. A few times and eliminations were corrected using WWE.com, Wikipedia and <a href="https://www.smarkoutmoment.com/p/wwe-royal-rumble-statistics-records.html">Smark Out Moment's Royal Rumble records</a>, researched by Anthony Mango. Sources don't always agree on shared eliminations, so a total can differ by one or two from what you've seen elsewhere.</p>
+</section>
+
+<footer>
+  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a></nav>
+  <p>House of Hoss games are fan-made and not affiliated with or endorsed by WWE, AEW, TNA, NWA or any other promotion.</p>
+  <p>Contact: contact@houseofhoss.com</p>
+</footer>
+</main>
+</body>
+</html>
