@@ -974,7 +974,6 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound
     <pre class="share" id="share"></pre>
     <div class="actions">
       <button type="button" class="btn" id="copyBtn">Copy result</button>
-      <button type="button" class="btn alt" id="discordBtn">Copy for Discord</button>
       <button type="button" class="btn alt" id="againBtn">Play a random one</button>
       <span class="status" id="copyStatus" aria-live="polite"></span>
     </div>
@@ -1205,20 +1204,19 @@ function renderResult(){
     + `</tbody>`;
   $("#resultStats").hidden = S.mode !== "daily";
   if(S.mode === "daily") $("#resultStats").innerHTML = `<h3>${DIV_LABEL[S.div]} daily stats</h3>` + statsHTML(S.div, S.n, won() ? S.guesses.length : "x");
-  $("#share").textContent = shareText(false);
+  $("#share").textContent = shareText();
   fillSlot(document.querySelector('.ad-slot[data-ad="result"]'));
   $("#copyStatus").textContent = "";
   $("#againBtn").textContent = S.mode === "daily" ? "Play a random one" : "Next random entrant";
   updateNext();
 }
 
-function shareText(spoiler){
+function shareText(){
   const SQ = {hit:"🟩", near:"🟨", miss:"⬛"};
   const grid = S.guesses.map(k => COLS.map(c => SQ[judge(person(k), S.ans, c).state]).join(""));
   const score = won() ? `${S.guesses.length}/${MAX}` : `X/${MAX}`;
   const lines = [S.mode === "daily" ? `${GAME} #${S.n} · ${DIV_LABEL[S.div]} ${score}` : `${GAME} free play · ${DIV_LABEL[S.div]} ${score}`, ...grid];
   if(S.mode === "daily"){ const st = liveStreak(getStats(S.div), S.n); if(st >= 2) lines.push(`🔥 ${st} day streak`); }
-  if(spoiler) lines.push(`Answer: ||${S.ans.n}||`);
   if(SITE_URL) lines.push(SITE_URL);
   return lines.join("\n");
 }
@@ -1473,8 +1471,7 @@ function copy(text, ok){
     rng.selectNodeContents($("#share")); sel.removeAllRanges(); sel.addRange(rng); st.textContent = "Selected. Copy it from here."; };
   try{ navigator.clipboard.writeText(text).then(() => { st.textContent = ok; }, fallback); }catch(e){ fallback(); }
 }
-$("#copyBtn").addEventListener("click", () => copy(shareText(false), "Copied"));
-$("#discordBtn").addEventListener("click", () => copy(shareText(true), "Copied with the answer hidden"));
+$("#copyBtn").addEventListener("click", () => copy(shareText(), "Copied"));
 $("#statsBtn").addEventListener("click", () => $("#statsPanel").hidden ? openPanel("stats") : closePage());
 setInterval(updateNext, 30000);
 
