@@ -438,6 +438,7 @@ const EGGS = [
   {id: "pose",     title: "Five-Second Pose"},
   {id: "fiend",    title: "Let Me In"},
   {id: "pyro",     title: "Big Red Machine"},
+  {id: "apple",    title: "An Apple a Day"},
 ];
 
 /* ---- Holidays (Nov 15). Solve any puzzle on the day (win a Title Run or a Roydle Rumble, book a full card, finish a Hoss;
@@ -557,7 +558,7 @@ function foundEgg(id){
 /* ---- Stats (read straight from each game's save) */
 const dayNo = launch => { if(!launch) return 0; const d = new Date(), [y, m, dd] = launch.split("-").map(Number);
   return Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(y, m - 1, dd)) / 864e5) + 1; };
-const liveStreak = (st, n) => st.lastWin >= n - 1 ? st.streak : 0;
+const liveStreak = (st, n) => st.lastWin >= n - 1 && st.lastWin <= n + 1 ? st.streak : 0;   // a marker past tomorrow = pre-launch numbering
 function modeRows(prefix, modes, launch){
   const n = dayNo(launch);
   return `<table class="hs-tbl"><thead><tr><th></th><th>Played</th><th>Win %</th><th>Streak</th><th>Best</th></tr></thead><tbody>`
@@ -568,7 +569,7 @@ function modeRows(prefix, modes, launch){
 const BB_STARS = [5, 4, 3, 2, 1];                          // card ratings by whole stars (3 = ★★★ to ★★★¾)
 function bbStats(){
   const st = Object.assign({played: 0, cards: 0, streak: 0, best: 0, lastDone: 0, topStars: 0, stars: {}}, store.get("bb-stats") || {});
-  const n = dayNo(CFG.launch.bb), streak = st.lastDone >= n - 1 ? st.streak : 0, max = Math.max(1, ...BB_STARS.map(k => st.stars[k] || 0));
+  const n = dayNo(CFG.launch.bb), streak = st.lastDone >= n - 1 && st.lastDone <= n + 1 ? st.streak : 0, max = Math.max(1, ...BB_STARS.map(k => st.stars[k] || 0));
   return `<div class="hs-nums"><div><b>${st.topStars ? st.topStars.toFixed(2) : "-"}</b><span>Best rating</span></div><div><b>${st.played}</b><span>Daily cards</span></div>`
     + `<div><b>${streak}</b><span>Streak</span></div><div><b>${st.best}</b><span>Best streak</span></div></div>`
     + `<ol class="hs-dist" aria-label="Card ratings">` + BB_STARS.map(k => { const v = st.stars[k] || 0;
@@ -578,7 +579,7 @@ function bbStats(){
 const CAH_BANDS = [[99, "99"], [90, "90+"], [80, "80+"], [76, "76+"], [70, "70+"], [0, "Under 70"]];
 function cahStats(){
   const st = Object.assign({played: 0, hosses: 0, streak: 0, best: 0, lastDone: 0, top: 0, ovr: {}}, store.get("cah-stats") || {});
-  const n = dayNo(CFG.launch.cah), streak = st.lastDone >= n - 1 ? st.streak : 0, bands = CAH_BANDS.map(() => 0);
+  const n = dayNo(CFG.launch.cah), streak = st.lastDone >= n - 1 && st.lastDone <= n + 1 ? st.streak : 0, bands = CAH_BANDS.map(() => 0);
   Object.entries(st.ovr).forEach(([o, c]) => { bands[CAH_BANDS.findIndex(([min]) => +o >= min)] += c; });
   const max = Math.max(1, ...bands);
   return `<div class="hs-nums"><div><b>${st.top || "-"}</b><span>Top OVR</span></div><div><b>${st.played}</b><span>Daily Hosses</span></div>`
